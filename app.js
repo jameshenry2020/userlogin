@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 
 //establishing a database connection
 mongoose.connect("mongodb://localhost/loginsystem");
@@ -23,6 +24,10 @@ app.set("view engine", "pug");
 app.get("/", (req, res) => {
   res.render("index");
 });
+
+//route files
+let users = require("./routes/user");
+app.use("/users", users);
 
 //starting our server
 app.listen(3000, () => {
