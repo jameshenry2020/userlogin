@@ -4,10 +4,11 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const flash = require("connect-flash");
-const { check, validationResult } = require("express-validator/check");
+const passport = require("passport");
+const config = require("./config/database");
 
 //establishing a database connection
-mongoose.connect("mongodb://localhost/loginsystem");
+mongoose.connect(config.database);
 let db = mongoose.connection;
 //check database connection
 db.once("open", () => {
@@ -46,6 +47,11 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
+//passport
+require("./config/passport");
+//passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
 //route files
 let users = require("./routes/user");
 app.use("/users", users);
