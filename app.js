@@ -48,7 +48,7 @@ app.get("/", (req, res) => {
 });
 
 //passport
-require("./config/passport");
+require("./config/passport")(passport);
 //passport middleware
 app.use(passport.initialize());
 app.use(passport.session());

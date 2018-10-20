@@ -17,6 +17,7 @@ router.get("/register", (req, res) => {
 router.post("/register", (req, res) => {
   const name = req.body.name;
   const email = req.body.email;
+  const username = req.body.username;
   const password = req.body.password;
   const password2 = req.body.password2;
 
@@ -25,14 +26,16 @@ router.post("/register", (req, res) => {
       console.log(err);
     } else {
       if (doc) {
-        res.send("email already exist");
-        res.render("register");
+        req.flash("danger", "email already in use");
+        res.render("/register");
       } else {
         let newUser = new User({
           name: name,
           email: email,
+          username: username,
           password: password
         });
+
         bcrypt.genSalt(10, (err, salt) => {
           bcrypt.hash(newUser.password, salt, (err, hash) => {
             if (err) {
@@ -42,8 +45,12 @@ router.post("/register", (req, res) => {
             newUser.save(err => {
               if (err) {
                 console.log(err);
+                return;
               } else {
-                req.flash("success", "you are now registerd and can login");
+                req.flash(
+                  "success",
+                  "registration successful you can now login in"
+                );
                 res.redirect("/users/login");
               }
             });
@@ -54,12 +61,14 @@ router.post("/register", (req, res) => {
   });
 });
 
+// login form...
+
 router.get("/login", (req, res) => {
   res.render("login");
 });
 
 router.post("/login", (req, res, next) => {
-  passport.authenticate("locals", {
+  passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "/users/login",
     failureFlash: true

@@ -1,16 +1,18 @@
 const LocalStrategy = require("passport-local").Strategy;
 const User = require("../models/users");
-const config = require("../config/database");
+const config = require("./database");
 const bcrypt = require("bcryptjs");
 
 module.exports = function(passport) {
   passport.use(
-    new LocalStrategy(function(email, password, done) {
+    new LocalStrategy(function(username, password, done) {
       //match email
-      let query = { email: email };
+      let query = { username: username };
 
       User.findOne(query, (err, user) => {
-        if (err) throw err;
+        if (err) {
+          console.log(err);
+        }
         if (!user) {
           return done(null, false, { message: "No user found" });
         }
