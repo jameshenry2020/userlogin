@@ -20,6 +20,8 @@ db.on("error", err => {
 
 // initializing our application
 const app = express();
+//setup the public folder
+app.use(express.static(path.join(__dirname, "public")));
 // session middleware
 app.use(
   session({
@@ -43,6 +45,11 @@ app.use(bodyParser.json());
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
+app.get("*", (req, res, next) => {
+  res.locals.user = req.user || null;
+  next();
+});
+
 app.get("/", (req, res) => {
   res.render("index");
 });
@@ -52,6 +59,7 @@ require("./config/passport")(passport);
 //passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
+
 //route files
 let users = require("./routes/user");
 app.use("/users", users);
